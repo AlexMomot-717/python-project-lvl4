@@ -39,16 +39,6 @@ repos:
       - id: isort
         name: isort (python)
         args: ["--profile", "black", "--filter-files"]
-  - repo: local
-    hooks:
-      - id: mypy
-        name: run mypy
-        language: system
-        # entry should be the same you'd use to run mypy locally
-        entry: mypy task_manager --config-file pyproject.toml
-        pass_filenames: false # not needed, as mypy should be executed on the whole codebase
-        always_run: true
-        types: [python, pyi]
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
@@ -60,7 +50,23 @@ repos:
       - id: gitlint
         stages: [commit-msg]
         args: [--contrib=CT1, --msg-filename]
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v4.0.0-alpha.8"
+  - repo: local
     hooks:
-      - id: prettier
+      - id: mypy
+        name: run mypy
+        language: system
+        # entry should be the same you'd use to run mypy locally
+        entry: mypy task_manager --config-file pyproject.toml
+        pass_filenames: false # not needed, as mypy should be executed on the whole codebase
+        always_run: true
+        types: [python, pyi]
+  - repo: local
+    hooks:
+      - id: htmlformatter
+        name: prettier html formatter
+        language: node
+        additional_dependencies:
+          - prettier@3.3.2
+          - prettier-plugin-jinja-template@1.4.0
+        entry: npx prettier task_manager --write **/*.html
+        types_or: [html]
