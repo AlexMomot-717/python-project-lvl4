@@ -5,7 +5,7 @@ default_language_version:
 
 repos:
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.8.0
+    rev: 1.7.1
     hooks:
       - id: poetry-check
       - id: poetry-lock
@@ -49,18 +49,15 @@ repos:
         pass_filenames: false # not needed, as mypy should be executed on the whole codebase
         always_run: true
         types: [python, pyi]
-  #  - repo: https://github.com/pre-commit/mirrors-mypy
-  #    rev: "v1.10.0"
-  #    hooks:
-  #      - id: mypy
-  #        name: run mypy
-  #        language: system
-  #        args: [--strict, --ignore-missing-imports]
-  #        # entry should be the same you'd use to run mypy locally
-  #        entry: mypy task_manager --config-file pyproject.toml
-  #        pass_filenames: false # not needed, as mypy should be executed on the whole codebase
-  #        always_run: true
-  #        types: [python, pyi]
+      - id: prettier
+        name: run prettier
+        language: node
+        additional_dependencies:
+          - prettier@3.3.2
+          - prettier-plugin-jinja-template@1.4.0
+        entry: npx prettier --write **/*.html
+        pass_filenames: false
+        types_or: [html]
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
@@ -72,13 +69,3 @@ repos:
       - id: gitlint
         stages: [commit-msg]
         args: [--contrib=CT1, --msg-filename]
-  - repo: local
-    hooks:
-      - id: htmlformatter
-        name: html prettier formatter
-        language: node
-        additional_dependencies:
-          - prettier@3.3.2
-          - prettier-plugin-jinja-template@1.4.0
-        entry: npx prettier task_manager --write **/*.html
-        types_or: [html]
