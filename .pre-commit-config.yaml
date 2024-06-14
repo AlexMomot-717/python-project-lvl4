@@ -60,8 +60,6 @@ repos:
         pass_filenames: false # not needed, as mypy should be executed on the whole codebase
         always_run: true
         types: [python, pyi]
-  - repo: local
-    hooks:
       - id: htmlformatter
         name: prettier html formatter
         language: node
