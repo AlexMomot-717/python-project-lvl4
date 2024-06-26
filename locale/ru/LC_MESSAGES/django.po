@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-07 11:35+0500\n"
+"POT-Creation-Date: 2024-06-29 18:47+0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: ALEXANDRA NAUMENKO <MOMOTAV717@GMAIL.COM>\n"
 "Language-Team: RUSSIAN <MOMOTAV717@GMAIL.COM>>\n"
@@ -32,22 +32,152 @@ msgstr "Менеджер задач"
 msgid "Users"
 msgstr "Пользователи"
 
-#: task_manager/templates/base.html:30
-msgid "Sign in"
-msgstr "Вход"
+#: task_manager/templates/base.html:31
+msgid "Statuses"
+msgstr "Статусы"
 
-#: task_manager/templates/base.html:33
+#: task_manager/templates/base.html:34
+msgid "Labels"
+msgstr "Метки"
+
+#: task_manager/templates/base.html:37
+msgid "Tasks"
+msgstr "Задачи"
+
+#: task_manager/templates/base.html:48
+msgid "Sign out"
+msgstr "Выход"
+
+#: task_manager/templates/base.html:57 task_manager/templates/login.html:35
+msgid "Sign in"
+msgstr "Войти"
+
+#: task_manager/templates/base.html:62
+#: task_manager/users/templates/create_user.html:15
 msgid "Sign up"
 msgstr "Регистрация"
 
-#: task_manager/templates/index.html:7
+#: task_manager/templates/index.html:9
 msgid "Hello from Hexlet!"
 msgstr "Привет от Хекслета!"
 
-#: task_manager/templates/index.html:8
+#: task_manager/templates/index.html:10
 msgid "Practical programming courses"
 msgstr "Практические курсы по программированию"
 
-#: task_manager/templates/index.html:11
+#: task_manager/templates/index.html:13
 msgid "Learn more"
 msgstr "Узнать больше"
+
+#: task_manager/templates/login.html:5
+msgid "Signing in"
+msgstr "Вход"
+
+#: task_manager/templates/login.html:9 task_manager/templates/login.html:18
+#: task_manager/users/templates/users_list.html:10
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: task_manager/templates/login.html:24 task_manager/templates/login.html:30
+msgid "Password"
+msgstr "Пароль"
+
+#: task_manager/users/templates/create_user.html:7
+msgid "Signing up"
+msgstr "Регистрация"
+
+#: task_manager/users/templates/delete_user.html:5
+msgid "Delete user"
+msgstr "Удаление пользователя"
+
+#: task_manager/users/templates/delete_user.html:6
+msgid "Are you sure you want to delete"
+msgstr "Вы уверены, что хотите удалить"
+
+#: task_manager/users/templates/delete_user.html:12
+msgid "Yes, delete"
+msgstr "Да, удалить"
+
+#: task_manager/users/templates/update_user.html:6
+msgid "Update user"
+msgstr "Изменение пользователя"
+
+#: task_manager/users/templates/update_user.html:13
+#: task_manager/users/templates/users_list.html:26
+msgid "Update"
+msgstr "Изменить"
+
+#: task_manager/users/templates/users_list.html:11
+msgid "Full name"
+msgstr "Полное имя"
+
+#: task_manager/users/templates/users_list.html:12
+msgid "Sign up date"
+msgstr "Дата создания"
+
+#: task_manager/users/templates/users_list.html:30
+msgid "Delete"
+msgstr "Удалить"
+
+#: task_manager/users/views.py:31
+msgid "You are not authorized! Please sign in."
+msgstr "Вы не авторизованы! Пожалуйста, выполните вход."
+
+#: task_manager/users/views.py:59
+msgid "User signed up successfully."
+msgstr "Пользователь успешно зарегистрирован"
+
+#: task_manager/users/views.py:72 task_manager/users/views.py:101
+msgid "You do not have permission to update or delete another user."
+msgstr "У вас нет прав для изменения другого пользователя."
+
+#: task_manager/users/views.py:87
+msgid "User has been updated successfully"
+msgstr "Пользователь успешно изменен"
+
+#: task_manager/users/views.py:113
+msgid "User has been deleted successfully"
+msgstr "Пользователь удален"
+
+#: task_manager/views.py:25
+msgid "You are signed in"
+msgstr "Вы залогинены"
+
+#: task_manager/views.py:30
+msgid ""
+"Please enter the correct username and password. Both fields may be case "
+"sensitive."
+msgstr ""
+"Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут "
+"быть чувствительны к регистру."
+
+#: task_manager/views.py:40
+msgid "You are signed out"
+msgstr "Вы разлогинены"
+
+#~ msgid "First name"
+#~ msgstr "Имя"
+
+#~ msgid "Last name"
+#~ msgstr "Фамилия"
+
+#~ msgid ""
+#~ "Required. No more than 150 characters. Only letters, numbers and symbols"
+#~ msgstr ""
+#~ "Обязательное поле. Не более 150 символов. Только буквы, цифры и символы "
+#~ "@/./+/-/_."
+
+#~ msgid "Your password must contain at least 3 characters."
+#~ msgstr "Ваш пароль должен содержать как минимум 3 символа."
+
+#~ msgid "Password confirmation"
+#~ msgstr "Подтверждение пароля"
+
+#~ msgid "To confirm, please enter your password again."
+#~ msgstr "Для подтверждения введите, пожалуйста, пароль ещё раз."
+
+#~ msgid "Tags"
+#~ msgstr "Метки"
+
+#~ msgid "Logout"
+#~ msgstr "Выход"

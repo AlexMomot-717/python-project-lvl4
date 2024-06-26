@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hexlet-code"
-version = "0.2.0"
+version = "0.3.0"
 description = "simple tool for task management"
 authors = ["alexandra naumenko <momotav717@gmail.com>"]
 readme = "README.md"
@@ -25,6 +25,7 @@ isort = "^5.13.2"
 mypy = "^1.10.0"
 flake8 = "^7.0.0"
 django-stubs = {extras = ["compatible-mypy"], version = "^5.0.2"}
+django-stubs-ext = "^5.0.2"
 
 [tool.isort]
 # See https://github.com/timothycrosley/isort#multi-line-output-modes
@@ -37,6 +38,10 @@ line_length = 79
 [tool.mypy]
 python_version = 3.11
 strict = true
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "task_manager.settings"
 
 [build-system]
 requires = ["poetry-core"]
