@@ -43,7 +43,6 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        exclude: task_manager/settings.py
   - repo: https://github.com/jorisroovers/gitlint
     rev: v0.19.1
     hooks:
@@ -60,8 +59,6 @@ repos:
         pass_filenames: false # not needed, as mypy should be executed on the whole codebase
         always_run: true
         types: [python, pyi]
-  - repo: local
-    hooks:
       - id: htmlformatter
         name: prettier html formatter
         language: node

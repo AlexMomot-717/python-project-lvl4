@@ -14,7 +14,13 @@ import os
 from pathlib import Path
 
 import dj_database_url
+import django_stubs_ext
+from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
+
+# Monkeypatching Django, so stubs will work for all generics,
+# see: https://github.com/typeddjango/django-stubs
+django_stubs_ext.monkeypatch()
 
 load_dotenv()
 
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_bootstrap5",
     "task_manager",
+    "task_manager.users",
 ]
 
 MIDDLEWARE = [
@@ -88,13 +95,21 @@ WSGI_APPLICATION = "task_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600,
-        conn_health_checks=True,
-    ),
+DATABASES: dict[str, dj_database_url.DBConfig] = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
 }
+
+if not DEBUG:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age=600,
+            conn_health_checks=True,
+        ),
+    }
 
 
 # Password validation
@@ -102,18 +117,21 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",  # noqa: E501
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",  # noqa: E501
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",  # noqa: E501
     },
 ]
+
+
+CSRF_TRUSTED_ORIGINS = ["https://127.0.0.0.1"]
 
 
 # Internationalization
@@ -135,22 +153,35 @@ LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-# This setting informs Django of the URI path from which your static files will be served to users
-# Here, they will be accessible at your-domain.onrender.com/static/... or yourcustomdomain.com/static/...
+# This setting informs Django of the URI path from which your static files will be served to users  # noqa: E501
+# Here, they will be accessible at your-domain.onrender.com/static/... or yourcustomdomain.com/static/...  # noqa: E501
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-# This production code might break development mode, so we check whether we're in DEBUG mode
+# This production code might break development mode, so we check whether we're in DEBUG mode  # noqa: E501
 if not DEBUG:
-    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)  # noqa: E501
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
-    # and renames the files with unique names for each version to support long-term caching
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use  # noqa: E501
+    # and renames the files with unique names for each version to support long-term caching  # noqa: E501
+    STATICFILES_STORAGE = (
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"  # noqa: E501
+    )
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+AUTH_USER_MODEL = "users.ServiceUser"
+
+
+LOGIN_URL = "login"
+
+
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",
+}
