@@ -29,6 +29,7 @@ repos:
         # syntax to notify a line break.
         # See https://github.com/pre-commit/pre-commit-hooks/issues/57
         exclude_types: [markdown]
+        exclude: task_manager/tests/fixtures/
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
@@ -67,4 +68,4 @@ repos:
           - prettier@3.3.2
           - prettier-plugin-jinja-template@1.4.0
         entry: npx prettier task_manager --write **/*.html
-        types_or: [html]
+        pass_filenames: false

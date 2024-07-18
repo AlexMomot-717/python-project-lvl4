@@ -1,0 +1,2 @@
+# Ignore test fixtures files:
+task_manager/tests/fixtures/users.html
