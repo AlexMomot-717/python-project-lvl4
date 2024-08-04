@@ -1,19 +1,14 @@
 import pytest
 from django.template.response import TemplateResponse
 from django.test import Client
-from freezegun import freeze_time
 from task_manager.users.forms import ServiceUserForm
 from task_manager.users.models import ServiceUser
 
 pytestmark = pytest.mark.django_db
 
 
-@freeze_time("15.07.2024 17:00")
-def test_users_list(client: Client) -> None:
+def test_users_list(client: Client, service_user: ServiceUser) -> None:
     # given
-    ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="x", password="%%%%%"
-    )
     route = "/users/"
     users = ServiceUser.objects.all()
 
@@ -29,7 +24,6 @@ def test_users_list(client: Client) -> None:
     assert response.status_code == 200
 
 
-@freeze_time("15.07.2024 17:00")
 def test_create_user_get(client: Client) -> None:
     # given
     route = "/users/create/"
@@ -48,7 +42,6 @@ def test_create_user_get(client: Client) -> None:
     assert response.status_code == 200
 
 
-@freeze_time("15.07.2024 17:00")
 def test_create_user_post(client: Client) -> None:
     # given
     route = "/users/create/"
@@ -68,18 +61,15 @@ def test_create_user_post(client: Client) -> None:
     assert response["Location"] == "/login/"
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_get_user_is_logged_in(client: Client) -> None:
+def test_edit_user_get_user_is_logged_in(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/edit/"
 
     # when
-    client.force_login(service_user)
     response = client.get(route)
     csrf_token = response.context.get("csrf_token")
     form = ServiceUserForm(instance=service_user)
@@ -93,12 +83,10 @@ def test_edit_user_get_user_is_logged_in(client: Client) -> None:
     assert response.status_code == 200
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_get_user_is_not_logged_in(client: Client) -> None:
+def test_edit_user_get_user_is_not_logged_in(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     user_id = service_user.id
     route = f"/users/{user_id}/edit/"
 
@@ -109,12 +97,10 @@ def test_edit_user_get_user_is_not_logged_in(client: Client) -> None:
     assert "login" in response["Location"]
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_get_requestuser_is_not_objectuser(client: Client) -> None:
+def test_edit_user_get_requestuser_is_not_objectuser(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     object_user_id = ServiceUser.objects.create(
         first_name="taylor", last_name="swift", username="alison", password="*****"
@@ -128,12 +114,10 @@ def test_edit_user_get_requestuser_is_not_objectuser(client: Client) -> None:
     assert response["Location"] == "/users/"
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_objectuser_does_not_exist(client: Client) -> None:
+def test_edit_user_objectuser_does_not_exist(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     object_user_id = 2
     route = f"/users/{object_user_id}/edit/"
@@ -145,12 +129,8 @@ def test_edit_user_objectuser_does_not_exist(client: Client) -> None:
     assert response.status_code == 404
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_post(client: Client) -> None:
+def test_edit_user_post(client: Client, service_user: ServiceUser) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/edit/"
@@ -172,12 +152,10 @@ def test_edit_user_post(client: Client) -> None:
     assert response["Location"] == "/users/"
 
 
-@freeze_time("15.07.2024 17:00")
-def test_edit_user_post_form_is_not_valid(client: Client) -> None:
+def test_edit_user_post_form_is_not_valid(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/edit/"
@@ -197,12 +175,10 @@ def test_edit_user_post_form_is_not_valid(client: Client) -> None:
     assert response.status_code == 200
 
 
-@freeze_time("15.07.2024 17:00")
-def test_delete_user_get_user_is_logged_in(client: Client) -> None:
+def test_delete_user_get_user_is_logged_in(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
@@ -220,12 +196,10 @@ def test_delete_user_get_user_is_logged_in(client: Client) -> None:
     assert response.status_code == 200
 
 
-@freeze_time("15.07.2024 17:00")
-def test_delete_user_get_user_is_not_logged_in(client: Client) -> None:
+def test_delete_user_get_user_is_not_logged_in(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
 
@@ -236,12 +210,10 @@ def test_delete_user_get_user_is_not_logged_in(client: Client) -> None:
     assert "login" in response["Location"]
 
 
-@freeze_time("15.07.2024 17:00")
-def test_delete_user_objectuser_does_not_exist(client: Client) -> None:
+def test_delete_user_objectuser_does_not_exist(
+    client: Client, service_user: ServiceUser
+) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
     client.force_login(service_user)
     object_user_id = 2
     route = f"/users/{object_user_id}/delete/"
@@ -253,17 +225,13 @@ def test_delete_user_objectuser_does_not_exist(client: Client) -> None:
     assert response.status_code == 404
 
 
-@freeze_time("15.07.2024 17:00")
-def test_delete_user_post(client: Client) -> None:
+def test_delete_user_post(client: Client, service_user: ServiceUser) -> None:
     # given
-    service_user = ServiceUser.objects.create(
-        first_name="ilon", last_name="mask", username="ilon-mask", password="%%%%%"
-    )
+    client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
 
     # when
-    client.force_login(service_user)
     response = client.post(route)
 
     # then
