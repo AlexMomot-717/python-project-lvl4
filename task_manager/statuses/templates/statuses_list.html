@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load i18n %}
+  {% load custom_filters %}
+  <h1 class="my-4">{% translate "Statuses" %}</h1>
+  <a class="btn btn-primary mb-3" href="/statuses/create/"
+    >{% translate "Create status" %}</a
+  >
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>{% translate "Name" %}</th>
+        <th>{% translate "Creation date" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    {% if statuses %}
+      <tbody>
+        {% for status in statuses %}
+          <tr>
+            <td>{{ status.id }}</td>
+            <td>{{ status.name }}</td>
+            <td>{{ status.created_at|format_datetime }}</td>
+            <td>
+              <a href="/statuses/{{ status.id }}/edit/"
+                >{% translate "Update" %}</a
+              >
+              <br />
+              <a href="/statuses/{{ status.id }}/delete/"
+                >{% translate "Delete" %}</a
+              >
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    {% endif %}
+  </table>
+{% endblock %}
