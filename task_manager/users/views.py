@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
 from task_manager.settings import LOGIN_URL
+from task_manager.tasks.models import Task
 from task_manager.users.forms import ServiceUserForm
 from task_manager.users.models import ServiceUser
 
@@ -47,7 +48,7 @@ class UserFormCreateView(View):
         return render(request, "create_user.html", {"form": user_form})
 
 
-class UserFormEditView(UserLoginRequiredMixin, View):
+class UserFormUpdateView(UserLoginRequiredMixin, View):
     def get(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         user_id = kwargs.get("id")
         user = get_object_or_404(ServiceUser, pk=user_id)
@@ -85,7 +86,13 @@ class UserFormDeleteView(UserLoginRequiredMixin, View):
     def post(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         user_id = kwargs.get("id")
         user = get_object_or_404(ServiceUser, pk=user_id)
-        user.delete()
-        message = _("User has been deleted successfully")
-        messages.add_message(request, messages.SUCCESS, message)
+        tasks_where_user_is_author = Task.objects.filter(author=user)
+        tasks_where_user_is_executor = Task.objects.filter(executor=user)
+        if tasks_where_user_is_author or tasks_where_user_is_executor:
+            message = _("It is not possible to delete the user because it is used")
+            messages.add_message(request, messages.ERROR, message)
+        else:
+            user.delete()
+            message = _("User has been deleted successfully")
+            messages.add_message(request, messages.SUCCESS, message)
         return redirect("users_list")

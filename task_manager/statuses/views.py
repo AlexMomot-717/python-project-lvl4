@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from task_manager.statuses.forms import StatusForm
 from task_manager.statuses.models import Status
+from task_manager.tasks.models import Task
 from task_manager.users.views import UserLoginRequiredMixin
 
 
@@ -35,7 +36,7 @@ class StatusFormCreateView(UserLoginRequiredMixin, View):
         return render(request, "create_status.html", {"form": form})
 
 
-class StatusFormEditView(UserLoginRequiredMixin, View):
+class StatusFormUpdateView(UserLoginRequiredMixin, View):
     def get(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         status_id = kwargs.get("id")
         status = get_object_or_404(Status, pk=status_id)
@@ -65,7 +66,12 @@ class StatusFormDeleteView(UserLoginRequiredMixin, View):
     def post(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         status_id = kwargs.get("id")
         status = get_object_or_404(Status, pk=status_id)
-        status.delete()
-        message = _("Status has been deleted successfully")
-        messages.add_message(request, messages.SUCCESS, message)
+        tasks_with_this_status = Task.objects.filter(status=status)
+        if tasks_with_this_status:
+            message = _("It is not possible to delete the status because it is in use")
+            messages.add_message(request, messages.ERROR, message)
+        else:
+            status.delete()
+            message = _("Status has been deleted successfully")
+            messages.add_message(request, messages.SUCCESS, message)
         return redirect("statuses_list")

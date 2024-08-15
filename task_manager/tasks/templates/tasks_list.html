@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load i18n %}
+  {% load custom_filters %}
+  <h1 class="my-4">{% translate "Tasks" %}</h1>
+  <a class="btn btn-primary mb-3" href="/tasks/create/"
+    >{% translate "Create task" %}</a
+  >
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>{% translate "Name" %}</th>
+        <th>{% translate "Status" %}</th>
+        <th>{% translate "Author" %}</th>
+        <th>{% translate "Executor" %}</th>
+        <th>{% translate "Creation date" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    {% if tasks %}
+      <tbody>
+        {% for task in tasks %}
+          <tr>
+            <td>{{ task.id }}</td>
+            <td>
+              <a href="/tasks/{{ task.id }}/">{{ task.name }}</a>
+            </td>
+            <td>{{ task.status.name }}</td>
+            <td>{{ task.author }}</td>
+            {% if task.executor %}
+              <td>{{ task.executor }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            <td>{{ task.created_at|format_datetime }}</td>
+            <td>
+              <a href="/tasks/{{ task.id }}/update/"
+                >{% translate "Update" %}</a
+              >
+              <br />
+              <a href="/tasks/{{ task.id }}/delete/"
+                >{% translate "Delete" %}</a
+              >
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    {% endif %}
+  </table>
+{% endblock %}
