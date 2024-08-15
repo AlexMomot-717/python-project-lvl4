@@ -3,15 +3,20 @@ from django.template.response import TemplateResponse
 from django.test import Client
 from task_manager.statuses.forms import StatusForm
 from task_manager.statuses.models import Status
-from task_manager.users.models import ServiceUser
+from task_manager.tests.helpers import (
+    create_service_user,
+    create_status,
+    create_task,
+)
 
 pytestmark = pytest.mark.django_db
 
 
-def test_statuses_list(client: Client, service_user: ServiceUser) -> None:
+def test_statuses_list(client: Client) -> None:
     # given
+    create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
-    Status.objects.create(name="frozen")
     statuses = Status.objects.all()
     route = "/statuses/"
 
@@ -28,8 +33,10 @@ def test_statuses_list(client: Client, service_user: ServiceUser) -> None:
     assert response.status_code == 200
 
 
-def test_create_status_get(client: Client, service_user: ServiceUser) -> None:
+def test_create_status_get(client: Client) -> None:
     # given
+    create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     route = "/statuses/create/"
 
@@ -47,8 +54,9 @@ def test_create_status_get(client: Client, service_user: ServiceUser) -> None:
     assert response.status_code == 200
 
 
-def test_create_status_post(client: Client, service_user: ServiceUser) -> None:
+def test_create_status_post(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     route = "/statuses/create/"
     form_data = {
@@ -63,13 +71,13 @@ def test_create_status_post(client: Client, service_user: ServiceUser) -> None:
     assert response["Location"] == "/statuses/"
 
 
-def test_edit_status_get(client: Client, service_user: ServiceUser) -> None:
+def test_update_status_get(client: Client) -> None:
     # given
-    status = Status.objects.create(name="frozen")
-
+    status = create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = status.id
-    route = f"/statuses/{status_id}/edit/"
+    route = f"/statuses/{status_id}/update/"
 
     # when
     response = client.get(route)
@@ -85,11 +93,12 @@ def test_edit_status_get(client: Client, service_user: ServiceUser) -> None:
     assert response.status_code == 200
 
 
-def test_edit_status_does_not_exist(client: Client, service_user: ServiceUser) -> None:
+def test_update_status_does_not_exist(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = 1
-    route = f"/statuses/{status_id}/edit/"
+    route = f"/statuses/{status_id}/update/"
 
     # when
     response = client.get(route)
@@ -98,12 +107,13 @@ def test_edit_status_does_not_exist(client: Client, service_user: ServiceUser) -
     assert response.status_code == 404
 
 
-def test_edit_status_post(client: Client, service_user: ServiceUser) -> None:
+def test_update_status_post(client: Client) -> None:
     # given
-    status = Status.objects.create(name="frozen")
+    status = create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = status.id
-    route = f"/statuses/{status_id}/edit/"
+    route = f"/statuses/{status_id}/update/"
     form_data = {
         "name": "reopened",
     }
@@ -116,14 +126,13 @@ def test_edit_status_post(client: Client, service_user: ServiceUser) -> None:
     assert response["Location"] == "/statuses/"
 
 
-def test_edit_status_post_form_is_not_valid(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_status_post_form_is_not_valid(client: Client) -> None:
     # given
-    status = Status.objects.create(name="frozen")
+    status = create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = status.id
-    route = f"/statuses/{status_id}/edit/"
+    route = f"/statuses/{status_id}/update/"
     form_data = {
         "name": "",
     }
@@ -136,9 +145,10 @@ def test_edit_status_post_form_is_not_valid(
     assert response.status_code == 200
 
 
-def test_delete_status(client: Client, service_user: ServiceUser) -> None:
+def test_delete_status(client: Client) -> None:
     # given
-    status = Status.objects.create(name="frozen")
+    status = create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = status.id
     route = f"/statuses/{status_id}/delete/"
@@ -156,10 +166,9 @@ def test_delete_status(client: Client, service_user: ServiceUser) -> None:
     assert response.status_code == 200
 
 
-def test_delete_status_does_not_exist(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_delete_status_does_not_exist(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = 1
     route = f"/statuses/{status_id}/delete/"
@@ -171,9 +180,27 @@ def test_delete_status_does_not_exist(
     assert response.status_code == 404
 
 
-def test_delete_status_post(client: Client, service_user: ServiceUser) -> None:
+def test_delete_status_post_status_in_use(client: Client) -> None:
     # given
-    status = Status.objects.create(name="frozen")
+    task = create_task()
+    service_user = task.author
+    status = task.status
+    client.force_login(service_user)
+    status_id = status.id
+    route = f"/statuses/{status_id}/delete/"
+
+    # when
+    response = client.post(route)
+
+    # then
+    assert Status.objects.count() == 1
+    assert response["Location"] == "/statuses/"
+
+
+def test_delete_status_post(client: Client) -> None:
+    # given
+    status = create_status()
+    service_user = create_service_user()
     client.force_login(service_user)
     status_id = status.id
     route = f"/statuses/{status_id}/delete/"

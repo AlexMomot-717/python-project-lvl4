@@ -1,14 +1,16 @@
 import pytest
 from django.template.response import TemplateResponse
 from django.test import Client
+from task_manager.tests.helpers import create_service_user, create_task
 from task_manager.users.forms import ServiceUserForm
 from task_manager.users.models import ServiceUser
 
 pytestmark = pytest.mark.django_db
 
 
-def test_users_list(client: Client, service_user: ServiceUser) -> None:
+def test_users_list(client: Client) -> None:
     # given
+    create_service_user()
     route = "/users/"
     users = ServiceUser.objects.all()
 
@@ -61,13 +63,12 @@ def test_create_user_post(client: Client) -> None:
     assert response["Location"] == "/login/"
 
 
-def test_edit_user_get_user_is_logged_in(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_user_get_user_is_logged_in(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     user_id = service_user.id
-    route = f"/users/{user_id}/edit/"
+    route = f"/users/{user_id}/update/"
 
     # when
     response = client.get(route)
@@ -83,12 +84,11 @@ def test_edit_user_get_user_is_logged_in(
     assert response.status_code == 200
 
 
-def test_edit_user_get_user_is_not_logged_in(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_user_get_user_is_not_logged_in(client: Client) -> None:
     # given
+    service_user = create_service_user()
     user_id = service_user.id
-    route = f"/users/{user_id}/edit/"
+    route = f"/users/{user_id}/update/"
 
     # when
     response = client.get(route)
@@ -97,15 +97,14 @@ def test_edit_user_get_user_is_not_logged_in(
     assert "login" in response["Location"]
 
 
-def test_edit_user_get_requestuser_is_not_objectuser(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_user_get_requestuser_is_not_objectuser(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     object_user_id = ServiceUser.objects.create(
         first_name="taylor", last_name="swift", username="alison", password="*****"
     ).id
-    route = f"/users/{object_user_id}/edit/"
+    route = f"/users/{object_user_id}/update/"
 
     # when
     response = client.get(route)
@@ -114,13 +113,12 @@ def test_edit_user_get_requestuser_is_not_objectuser(
     assert response["Location"] == "/users/"
 
 
-def test_edit_user_objectuser_does_not_exist(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_user_objectuser_does_not_exist(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     object_user_id = 2
-    route = f"/users/{object_user_id}/edit/"
+    route = f"/users/{object_user_id}/update/"
 
     # when
     response = client.get(route)
@@ -129,11 +127,12 @@ def test_edit_user_objectuser_does_not_exist(
     assert response.status_code == 404
 
 
-def test_edit_user_post(client: Client, service_user: ServiceUser) -> None:
+def test_update_user_post(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     user_id = service_user.id
-    route = f"/users/{user_id}/edit/"
+    route = f"/users/{user_id}/update/"
     form_data = {
         "first_name": "taylor",
         "last_name": "swift",
@@ -152,13 +151,12 @@ def test_edit_user_post(client: Client, service_user: ServiceUser) -> None:
     assert response["Location"] == "/users/"
 
 
-def test_edit_user_post_form_is_not_valid(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_update_user_post_form_is_not_valid(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     user_id = service_user.id
-    route = f"/users/{user_id}/edit/"
+    route = f"/users/{user_id}/update/"
     form_data = {
         "first_name": "",
         "last_name": "",
@@ -175,10 +173,9 @@ def test_edit_user_post_form_is_not_valid(
     assert response.status_code == 200
 
 
-def test_delete_user_get_user_is_logged_in(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_delete_user_get_user_is_logged_in(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
@@ -196,10 +193,9 @@ def test_delete_user_get_user_is_logged_in(
     assert response.status_code == 200
 
 
-def test_delete_user_get_user_is_not_logged_in(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_delete_user_get_user_is_not_logged_in(client: Client) -> None:
     # given
+    service_user = create_service_user()
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
 
@@ -210,10 +206,9 @@ def test_delete_user_get_user_is_not_logged_in(
     assert "login" in response["Location"]
 
 
-def test_delete_user_objectuser_does_not_exist(
-    client: Client, service_user: ServiceUser
-) -> None:
+def test_delete_user_objectuser_does_not_exist(client: Client) -> None:
     # given
+    service_user = create_service_user()
     client.force_login(service_user)
     object_user_id = 2
     route = f"/users/{object_user_id}/delete/"
@@ -225,8 +220,46 @@ def test_delete_user_objectuser_does_not_exist(
     assert response.status_code == 404
 
 
-def test_delete_user_post(client: Client, service_user: ServiceUser) -> None:
+def test_delete_user_post_user_is_being_used_as_author(client: Client) -> None:
     # given
+    task = create_task()
+    service_user = task.author
+    client.force_login(service_user)
+    user_id = service_user.id
+    route = f"/users/{user_id}/delete/"
+
+    # when
+    response = client.post(route)
+
+    # then
+    assert ServiceUser.objects.count() == 1
+    assert response["Location"] == "/users/"
+
+
+def test_delete_user_post_user_is_being_used_as_executor(client: Client) -> None:
+    # given
+    task = create_task()
+    user_executor = ServiceUser.objects.create(
+        first_name="nikola", last_name="tesla", username="niktes", password="****"
+    )
+    task.executor = user_executor
+    client.force_login(user_executor)
+
+    task.save()
+    route = f"/users/{user_executor.id}/delete/"
+
+    # when
+    response = client.post(route)
+
+    # then
+    assert ServiceUser.objects.count() == 2
+    assert ServiceUser.objects.get(pk=2).username == "niktes"
+    assert response["Location"] == "/users/"
+
+
+def test_delete_user_post(client: Client) -> None:
+    # given
+    service_user = create_service_user()
     client.force_login(service_user)
     user_id = service_user.id
     route = f"/users/{user_id}/delete/"
