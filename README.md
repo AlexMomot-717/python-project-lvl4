@@ -13,12 +13,20 @@ Install dependencies:
 poetry install
 ```
 
+
 Create .env file following .env.example file info.
+
 
 Build and execute migrations:
 
 ```
 make migrations
+```
+
+Create superuser for application administration:
+
+```
+python manage.py createsuperuser
 ```
 
 Start the application with:

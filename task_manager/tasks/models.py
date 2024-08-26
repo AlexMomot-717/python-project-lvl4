@@ -1,4 +1,5 @@
 from django.db import models
+from task_manager.labels.models import Label
 from task_manager.statuses.models import Status
 from task_manager.users.models import ServiceUser
 
@@ -17,4 +18,5 @@ class Task(models.Model):
         blank=True,
         on_delete=models.PROTECT,
     )
+    labels = models.ManyToManyField(Label, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

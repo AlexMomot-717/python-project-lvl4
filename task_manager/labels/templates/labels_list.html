@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load i18n %}
+  {% load custom_filters %}
+  <h1 class="my-4">{% translate "Labels" %}</h1>
+  <a class="btn btn-primary mb-3" href="/labels/create/"
+    >{% translate "Create label" %}</a
+  >
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>{% translate "Name" %}</th>
+        <th>{% translate "Creation date" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    {% if labels %}
+      <tbody>
+        {% for label in labels %}
+          <tr>
+            <td>{{ label.id }}</td>
+            <td>{{ label.name }}</td>
+            <td>{{ label.created_at|format_datetime }}</td>
+            <td>
+              <a href="/labels/{{ label.id }}/update/"
+                >{% translate "Update" %}</a
+              >
+              <br />
+              <a href="/labels/{{ label.id }}/delete/"
+                >{% translate "Delete" %}</a
+              >
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    {% endif %}
+  </table>
+{% endblock %}

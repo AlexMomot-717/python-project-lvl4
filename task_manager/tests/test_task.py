@@ -6,6 +6,7 @@ from task_manager.statuses.models import Status
 from task_manager.tasks.forms import TaskForm
 from task_manager.tasks.models import Task
 from task_manager.tests.helpers import (
+    create_label,
     create_service_user,
     create_status,
     create_task,
@@ -78,6 +79,7 @@ def test_create_task_post(client: Client) -> None:
     # given
     status = create_status()
     service_user = create_service_user()
+    label = create_label()
     client.force_login(service_user)
     route = "/tasks/create/"
     form_data = {
@@ -85,12 +87,14 @@ def test_create_task_post(client: Client) -> None:
         "description": "",
         "status": status.id,
         "executor": service_user.id,
+        "labels": [label.id],
     }
 
     # when
     response = client.post(route, data=form_data)
 
     # then
+    task = Task.objects.get(id=1)
     task_expected_dict = {
         "id": 1,
         "name": "fix",
@@ -98,9 +102,9 @@ def test_create_task_post(client: Client) -> None:
         "status": 1,
         "author": 1,
         "executor": 1,
+        "labels": [label],
     }
-    task_updated = Task.objects.get(id=1)
-    assert model_to_dict(task_updated) == task_expected_dict
+    assert model_to_dict(task) == task_expected_dict
     assert response["Location"] == "/tasks/"
 
 
@@ -143,6 +147,8 @@ def test_update_task_post(client: Client) -> None:
     task = create_task()
     service_user = task.author
     status_new = Status.objects.create(name="frozen")
+    label1 = create_label()
+    label2 = create_label(name="issue#17")
     client.force_login(service_user)
     route = f"/tasks/{task.id}/update/"
     form_data = {
@@ -150,13 +156,23 @@ def test_update_task_post(client: Client) -> None:
         "description": "",
         "status": status_new.id,
         "executor": service_user.id,
+        "labels": [label2.id, label1.id],
     }
 
     # when
     response = client.post(route, data=form_data)
 
     # then
-    assert Task.objects.get(id=1).status == status_new
+    task_expected_dict = {
+        "id": 1,
+        "name": "fix",
+        "description": "",
+        "status": 2,
+        "author": 1,
+        "executor": 1,
+        "labels": [label1, label2],
+    }
+    assert model_to_dict(Task.objects.get(id=1)) == task_expected_dict
     assert response["Location"] == "/tasks/"
 
 
