@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load django_bootstrap5 %}
+  {% load i18n %}
+  <h1 class="my-4">{% trans "Label creating" %}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input class="btn btn-primary" type="submit" value="{% trans 'Create' %}" />
+  </form>
+{% endblock %}

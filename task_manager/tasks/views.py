@@ -25,11 +25,13 @@ class TaskDetailsView(UserLoginRequiredMixin, View):
     def get(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         task_id = kwargs.get("id")
         task = get_object_or_404(Task, pk=task_id)
+        labels = get_object_or_404(Task, pk=task_id).labels.all()
         return render(
             request,
             "task_details.html",
             context={
                 "task": task,
+                "labels": labels,
             },
         )
 
@@ -47,16 +49,20 @@ class TaskFormCreateView(UserLoginRequiredMixin, View):
             status = form.cleaned_data["status"]
             author = request.user
             executor = form.cleaned_data["executor"]
-            Task.objects.create(
+            labels = form.cleaned_data["labels"]
+            task = Task(
                 name=name,
                 description=description,
                 status=status,
                 author=author,
                 executor=executor,
             )
+            task.save()
+            task.labels.add(*labels)
             message = _("Task created successfully.")
             messages.add_message(request, messages.SUCCESS, message)
             return redirect("tasks_list")
+
         return render(request, "create_task.html", {"form": form})
 
 
