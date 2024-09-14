@@ -6,6 +6,54 @@
   <a class="btn btn-primary mb-3" href="/tasks/create/"
     >{% translate "Create task" %}</a
   >
+  <div class="card mb-3">
+    <div class="card-body bg-light">
+<!--      <form class="form-inline center" method="get">-->
+<!--        <div class="mb-3">-->
+<!--        {{ filter.form.as_p }}-->
+<!--        <input type="submit" />-->
+<!--        </div>-->
+<!--        </form>-->
+    <form class="form-inline center" method="get">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label" for="id_status">Статус</label>
+        <select name="status" class="form-select ml-2 mr-3 is-valid" id="id_status">
+          <option value="{{ None }}" selected="">---------</option>
+          {% for status in statuses %}
+          <option value="{{ status.id }}">{{ status }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="id_executor">Исполнитель</label>
+        <select name="executor" class="form-select mr-3 ml-2 is-valid" id="id_executor">
+          <option value="{{ None }}">---------</option>
+          {% for executor in executors %}
+          <option value="{{ executor.id }}">{{ executor }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="id_label">Метка</label>
+        <select name="label" class="form-select mr-3 ml-2 is-valid" id="id_label">
+          <option value="{{ None }}">---------</option>
+          {% for label in labels %}
+          <option value="{{ label.id }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <div class="form-check">
+          <input type="checkbox" name="self_tasks" class="form-check-input mr-3 is-valid" id="id_self_tasks">
+          <label class="form-check-label" for="id_self_tasks">Только свои задачи</label>
+        </div>
+      </div>
+        <input class="btn btn-primary" type="submit" value="Показать">
+    </form>
+    </div>
+  </div>
+
   <table class="table table-striped">
     <thead>
       <tr>
@@ -18,9 +66,9 @@
         <th></th>
       </tr>
     </thead>
-    {% if tasks %}
+    {% if filter %}
       <tbody>
-        {% for task in tasks %}
+        {% for task in filter.qs %}
           <tr>
             <td>{{ task.id }}</td>
             <td>

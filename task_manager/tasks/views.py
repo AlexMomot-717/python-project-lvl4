@@ -3,6 +3,11 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
+from mypyc.doc.conf import author
+
+from task_manager.labels.models import Label
+from task_manager.statuses.models import Status
+from task_manager.tasks.filters import TaskFilter
 from task_manager.tasks.forms import TaskForm
 from task_manager.tasks.models import Task
 from task_manager.users.models import ServiceUser
@@ -10,14 +15,33 @@ from task_manager.users.views import UserLoginRequiredMixin
 
 
 class TaskListView(UserLoginRequiredMixin, View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        tasks = Task.objects.all()
+    def get(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
+        # status = kwargs.get("status")
+        # executor = kwargs.get("executor")
+        # label = kwargs.get("label")
+        # self_tasks = kwargs.get("self_tasks")
+        # if self_tasks:
+        #     author = request.user
+        # else:
+        #     author = None
+        # if kwargs:
+        #     task_filter = TaskFilter(request.GET, queryset=Task.objects.filter(status=status, author=author, executor=executor, label=label))
+        # else:
+        task_filter = TaskFilter(request.GET, queryset=Task.objects.all())
+        statuses = Status.objects.all()
+        executors = ServiceUser.objects.all()
+        author = request.user.id
+        labels = Label.objects.all()
         return render(
             request,
             "tasks_list.html",
             context={
-                "tasks": tasks,
-            },
+                "filter": task_filter,
+                "statuses": statuses,
+                "author": author,
+                "executors": executors,
+                "labels": labels
+            }
         )
 
 
