@@ -20,14 +20,14 @@ class TaskListView(UserLoginRequiredMixin, View):
         # executor = kwargs.get("executor")
         # label = kwargs.get("label")
         # self_tasks = kwargs.get("self_tasks")
-        # if self_tasks:
+        # if self_tasks:}
         #     author = request.user
         # else:
         #     author = None
         # if kwargs:
         #     task_filter = TaskFilter(request.GET, queryset=Task.objects.filter(status=status, author=author, executor=executor, label=label))
         # else:
-        task_filter = TaskFilter(request.GET, queryset=Task.objects.all())
+        task_filter = TaskFilter(request=request, queryset=Task.objects.all())
         statuses = Status.objects.all()
         executors = ServiceUser.objects.all()
         author = request.user.id
@@ -40,8 +40,8 @@ class TaskListView(UserLoginRequiredMixin, View):
                 "statuses": statuses,
                 "author": author,
                 "executors": executors,
-                "labels": labels
-            }
+                "labels": labels,
+            },
         )
 
 
