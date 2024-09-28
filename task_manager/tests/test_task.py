@@ -5,6 +5,12 @@ from django.test import Client
 from task_manager.statuses.models import Status
 from task_manager.tasks.forms import TaskForm
 from task_manager.tasks.models import Task
+from task_manager.tests.fixtures.expected_pieces_html import (
+    EXPECTED_HTML_FILTERS_ARE_NOT_SET,
+    EXPECTED_HTML_FILTERS_ARE_SET,
+    EXPECTED_HTML_FILTERS_ARE_SET_EMPTY_QUERYSET,
+    EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY,
+)
 from task_manager.tests.helpers import (
     create_label,
     create_service_user,
@@ -18,21 +24,116 @@ pytestmark = pytest.mark.django_db
 
 def test_tasks_list(client: Client) -> None:
     # given
-    task = create_task()
-    client.force_login(task.author)
-    tasks = Task.objects.all()
+    task_1 = create_task()
+    label_1 = create_label()
+    label_2 = create_label(name="docs")
+    task_1.labels.add(label_1, label_2)
+    task_1.save()
+    service_user_2 = create_service_user(
+        first_name="taylor", last_name="swift", username="alison", password="*****"
+    )
+    status_2 = create_status(name="frozen")
+    task_2 = Task.objects.create(
+        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+    )
+    task_2.labels.add(label_2)
+    task_2.save()
+    client.force_login(task_1.author)
     route = "/tasks/"
 
     # when
     response = client.get(route)
-    csrf_token = response.context.get("csrf_token")
-    context = {"csrf_token": csrf_token, "tasks": tasks}
 
     # then
-    expected_html = TemplateResponse(
-        response.wsgi_request, "tasks_list.html", context=context
-    ).render()
-    assert expected_html.content.decode() == response.content.decode()
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_NOT_SET
+    assert expected_html_piece in response.content.decode()
+    assert response.status_code == 200
+
+
+def test_tasks_list_request_user_tasks_only(client: Client) -> None:
+    # given
+    task_1 = create_task()
+    label_1 = create_label()
+    label_2 = create_label(name="docs")
+    task_1.labels.add(label_1, label_2)
+    task_1.save()
+    service_user_2 = create_service_user(
+        first_name="taylor", last_name="swift", username="alison", password="*****"
+    )
+    status_2 = create_status(name="frozen")
+    task_2 = Task.objects.create(
+        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+    )
+    task_2.labels.add(label_2)
+    task_2.save()
+    client.force_login(task_1.author)
+    route = "/tasks/"
+
+    # when
+    response = client.get(route, query_params={"request_user_tasks": True})
+
+    # then
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY
+    assert expected_html_piece in response.content.decode()
+    assert response.status_code == 200
+
+
+def test_tasks_list_filters_are_set(client: Client) -> None:
+    # given
+    task_1 = create_task()
+    label_1 = create_label()
+    label_2 = create_label(name="docs")
+    task_1.labels.add(label_1, label_2)
+    task_1.save()
+    service_user_2 = create_service_user(
+        first_name="taylor", last_name="swift", username="alison", password="*****"
+    )
+    status_2 = create_status(name="frozen")
+    task_2 = Task.objects.create(
+        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+    )
+    task_2.labels.add(label_2)
+    task_2.save()
+    client.force_login(task_1.author)
+    route = "/tasks/"
+
+    # when
+    response = client.get(route, query_params={"status": status_2.id})
+
+    # then
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET
+    assert expected_html_piece in response.content.decode()
+    assert response.status_code == 200
+
+
+def test_tasks_list_filters_are_set_empty_queryset(client: Client) -> None:
+    # given
+    task_1 = create_task()
+    label_1 = create_label()
+    label_2 = create_label(name="docs")
+    label_3 = create_label(name="bug")
+    task_1.labels.add(label_1, label_2)
+    task_1.save()
+    service_user_2 = create_service_user(
+        first_name="taylor", last_name="swift", username="alison", password="*****"
+    )
+    status_2 = create_status(name="frozen")
+    task_2 = Task.objects.create(
+        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+    )
+    task_2.labels.add(label_2)
+    task_2.save()
+    client.force_login(task_1.author)
+    route = "/tasks/"
+
+    # when
+    response = client.get(
+        route, query_params={"labels": label_3.id, "request_user_tasks": True}
+    )
+
+    # then
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET_EMPTY_QUERYSET
+    assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
 
 
@@ -94,7 +195,7 @@ def test_create_task_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    task = Task.objects.get(id=1)
+    task = Task.objects.get()
     task_expected_dict = {
         "id": 1,
         "name": "fix",
@@ -172,7 +273,7 @@ def test_update_task_post(client: Client) -> None:
         "executor": 1,
         "labels": [label1, label2],
     }
-    assert model_to_dict(Task.objects.get(id=1)) == task_expected_dict
+    assert model_to_dict(Task.objects.get()) == task_expected_dict
     assert response["Location"] == "/tasks/"
 
 
@@ -194,7 +295,7 @@ def test_update_task_post_form_is_not_valid(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Task.objects.get(id=1).name == "deploy"
+    assert Task.objects.get().name == "deploy"
     assert response.status_code == 200
     assert "update_task.html" in [temp.name for temp in response.templates]
 
@@ -247,7 +348,7 @@ def test_delete_task_request_user_is_not_author(client: Client) -> None:
     response = client.get(route)
 
     # then
-    actual_task = Task.objects.get(id=1)
+    actual_task = Task.objects.get()
     assert actual_task == task
     assert Task.objects.count() == 1
     assert response["Location"] == "/tasks/"

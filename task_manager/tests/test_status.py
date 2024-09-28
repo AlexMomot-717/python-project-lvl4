@@ -67,7 +67,7 @@ def test_create_status_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Status.objects.get(id=1).name == "reopened"
+    assert Status.objects.get().name == "reopened"
     assert response["Location"] == "/statuses/"
 
 
@@ -140,7 +140,7 @@ def test_update_status_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Status.objects.get(id=status_id).name == "reopened"
+    assert Status.objects.get().name == "reopened"
     assert response["Location"] == "/statuses/"
 
 
@@ -159,7 +159,7 @@ def test_update_status_post_form_is_not_valid(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Status.objects.get(id=1) == status
+    assert Status.objects.get() == status
     assert response.status_code == 200
 
 

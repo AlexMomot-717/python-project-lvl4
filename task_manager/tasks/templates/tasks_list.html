@@ -6,6 +6,23 @@
   <a class="btn btn-primary mb-3" href="/tasks/create/"
     >{% translate "Create task" %}</a
   >
+  <div class="card mb-3">
+    <div class="card-body bg-light">
+      <form class="form-inline center" method="get">
+        <div class="mb-3">
+          {{ filter.form.as_p }}
+          <input
+            class="btn btn-primary"
+            type="submit"
+            value="{% translate "Show" %}"
+          />
+          <br />
+          {% if filter.is_bound %}
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -18,9 +35,9 @@
         <th></th>
       </tr>
     </thead>
-    {% if tasks %}
+    {% if filter %}
       <tbody>
-        {% for task in tasks %}
+        {% for task in filter.qs %}
           <tr>
             <td>{{ task.id }}</td>
             <td>

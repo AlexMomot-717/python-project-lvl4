@@ -3,22 +3,17 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
+from django_filters.views import FilterView
+from task_manager.tasks.filters import TaskFilter
 from task_manager.tasks.forms import TaskForm
 from task_manager.tasks.models import Task
 from task_manager.users.models import ServiceUser
 from task_manager.users.views import UserLoginRequiredMixin
 
 
-class TaskListView(UserLoginRequiredMixin, View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        tasks = Task.objects.all()
-        return render(
-            request,
-            "tasks_list.html",
-            context={
-                "tasks": tasks,
-            },
-        )
+class TaskListView(UserLoginRequiredMixin, FilterView):
+    filterset_class = TaskFilter
+    template_name = "tasks_list.html"
 
 
 class TaskDetailsView(UserLoginRequiredMixin, View):
