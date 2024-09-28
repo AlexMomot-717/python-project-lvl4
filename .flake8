@@ -5,6 +5,7 @@ statistics = False
 # black compatibility
 max-line-length = 88
 extend-ignore = E203, E501
+per-file-ignores = task_manager/tests/fixtures/expected_pieces_html.py:W293
 doctests = True
 enable-extensions = G
 isort-show-traceback = True
