@@ -94,7 +94,7 @@ def test_create_task_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    task = Task.objects.get(id=1)
+    task = Task.objects.get()
     task_expected_dict = {
         "id": 1,
         "name": "fix",
@@ -172,7 +172,7 @@ def test_update_task_post(client: Client) -> None:
         "executor": 1,
         "labels": [label1, label2],
     }
-    assert model_to_dict(Task.objects.get(id=1)) == task_expected_dict
+    assert model_to_dict(Task.objects.get()) == task_expected_dict
     assert response["Location"] == "/tasks/"
 
 
@@ -194,7 +194,7 @@ def test_update_task_post_form_is_not_valid(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Task.objects.get(id=1).name == "deploy"
+    assert Task.objects.get().name == "deploy"
     assert response.status_code == 200
     assert "update_task.html" in [temp.name for temp in response.templates]
 
@@ -247,7 +247,7 @@ def test_delete_task_request_user_is_not_author(client: Client) -> None:
     response = client.get(route)
 
     # then
-    actual_task = Task.objects.get(id=1)
+    actual_task = Task.objects.get()
     assert actual_task == task
     assert Task.objects.count() == 1
     assert response["Location"] == "/tasks/"

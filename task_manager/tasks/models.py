@@ -5,7 +5,7 @@ from task_manager.users.models import ServiceUser
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(unique=True, max_length=200)
     description = models.TextField(blank=True)
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
     author = models.ForeignKey(

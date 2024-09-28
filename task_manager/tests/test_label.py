@@ -69,7 +69,7 @@ def test_create_label_post(client: Client) -> None:
 
     # then
     label_expected_dict = {"id": 1, "name": "bug"}
-    assert model_to_dict(Label.objects.get(id=1)) == label_expected_dict
+    assert model_to_dict(Label.objects.get()) == label_expected_dict
     assert response["Location"] == "/labels/"
 
 
@@ -140,7 +140,7 @@ def test_update_label_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Label.objects.get(id=label_id).name == "question"
+    assert Label.objects.get().name == "question"
     assert response["Location"] == "/labels/"
 
 
@@ -159,7 +159,7 @@ def test_update_label_post_form_is_not_valid(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert Label.objects.get(id=1).name == "enhancement"
+    assert Label.objects.get().name == "enhancement"
     assert response.status_code == 200
 
 
