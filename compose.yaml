@@ -1,0 +1,26 @@
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: ./docker-images/backend/Dockerfile
+    depends_on:
+      - postgres
+    env_file: docker-images/backend/.env.default
+    ports:
+      - "8000:8000"
+
+  postgres:
+    container_name: postgres
+    build:
+      context: ./docker-images/postgres
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    env_file: docker-images/postgres/.env.default
+    volumes:
+      - postgres:/var/lib/postgres/data
+
+volumes:
+  postgres:
+    name: postgres-volume
