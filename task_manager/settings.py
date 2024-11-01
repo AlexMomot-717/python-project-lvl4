@@ -41,7 +41,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "webserver",
-    "task-manager-nj02.onrender.com",
 ]
 
 
@@ -107,14 +106,8 @@ DATABASES: dict[str, dj_database_url.DBConfig] = {
     }
 }
 
-if not DEBUG:
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
-            conn_max_age=600,
-            conn_health_checks=True,
-        ),
-    }
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES["default"].update(db_from_env)
 
 
 # Password validation

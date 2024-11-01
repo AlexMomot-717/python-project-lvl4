@@ -36,3 +36,14 @@ make run
 ```
 
 The application will be available at http://127.0.0.1:8000.
+
+
+### Setup with Docker:
+
+Start the application with:
+
+```
+make up
+```
+
+The dockerized application will be available at http://127.0.0.1:8000.
