@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
+
 from task_manager.labels.forms import LabelForm
 from task_manager.labels.models import Label
 from task_manager.users.views import UserLoginRequiredMixin
@@ -65,9 +66,13 @@ class LabelFormDeleteView(UserLoginRequiredMixin, View):
     def post(self, request: HttpRequest, **kwargs: int | str) -> HttpResponse:
         label_id = kwargs.get("id")
         label = get_object_or_404(Label, pk=label_id)
-        tasks_with_this_label = get_object_or_404(Label, pk=label_id).task_set.all()
+        tasks_with_this_label = get_object_or_404(
+            Label, pk=label_id
+        ).task_set.all()
         if tasks_with_this_label:
-            message = _("It is not possible to delete the label because it is in use")
+            message = _(
+                "It is not possible to delete the label because it is in use"
+            )
             messages.add_message(request, messages.ERROR, message)
         else:
             label.delete()

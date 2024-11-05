@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
+
 from task_manager.statuses.forms import StatusForm
 from task_manager.statuses.models import Status
 from task_manager.tasks.models import Task
@@ -68,7 +69,9 @@ class StatusFormDeleteView(UserLoginRequiredMixin, View):
         status = get_object_or_404(Status, pk=status_id)
         tasks_with_this_status = Task.objects.filter(status=status)
         if tasks_with_this_status:
-            message = _("It is not possible to delete the status because it is in use")
+            message = _(
+                "It is not possible to delete the status because it is in use"
+            )
             messages.add_message(request, messages.ERROR, message)
         else:
             status.delete()
