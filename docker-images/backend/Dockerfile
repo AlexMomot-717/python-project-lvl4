@@ -13,18 +13,18 @@ WORKDIR /app
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
-ARG UID=10001
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
+#ARG UID=10001
+#RUN adduser \
+#    --disabled-password \
+#    --gecos "" \
+#    --home "/nonexistent" \
+#    --shell "/sbin/nologin" \
+#    --no-create-home \
+#    --uid "${UID}" \
+#    appuser
 
 # Copy the source code into the container.
-COPY manage.py Makefile pyproject.toml poetry.lock /app/
+COPY manage.py Makefile pyproject.toml poetry.lock .flake8 .prettierignore .prettierrc.js /app/
 COPY task_manager /app/task_manager
 COPY locale /app/locale
 
@@ -38,7 +38,7 @@ RUN poetry config virtualenvs.create false
 RUN poetry install
 
 # Switch to the non-privileged user to run the application.
-USER appuser
+#USER appuser
 
 # Expose the port that the application listens on.
 EXPOSE 8000
