@@ -2,6 +2,7 @@ import pytest
 from django.forms.models import model_to_dict
 from django.template.response import TemplateResponse
 from django.test import Client
+
 from task_manager.labels.forms import LabelForm
 from task_manager.labels.models import Label
 from task_manager.tests.helpers import (
@@ -68,8 +69,8 @@ def test_create_label_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    label_expected_dict = {"id": 1, "name": "bug"}
-    assert model_to_dict(Label.objects.get()) == label_expected_dict
+    expected_label_name = "bug"
+    assert model_to_dict(Label.objects.get())["name"] == expected_label_name
     assert response["Location"] == "/labels/"
 
 

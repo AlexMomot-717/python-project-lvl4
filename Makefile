@@ -1,9 +1,8 @@
 install:
 	poetry install
 
-migrations:
-	@python manage.py makemigrations
-	@python manage.py migrate
+make migrate:
+	python manage.py migrate
 
 run:
 	python -m gunicorn task_manager.asgi:application -k uvicorn.workers.UvicornWorker

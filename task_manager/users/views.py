@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
+
 from task_manager.settings import LOGIN_URL
 from task_manager.tasks.models import Task
 from task_manager.users.forms import ServiceUserForm
@@ -13,7 +14,9 @@ from task_manager.users.models import ServiceUser
 
 
 class UserLoginRequiredMixin(LoginRequiredMixin):
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: str | int) -> Any:
+    def dispatch(
+        self, request: HttpRequest, *args: Any, **kwargs: str | int
+    ) -> Any:
         if not request.user.is_authenticated:
             message = _("You are not authorized! Please sign in.")
             messages.add_message(request, messages.ERROR, message)
@@ -53,7 +56,9 @@ class UserFormUpdateView(UserLoginRequiredMixin, View):
         user_id = kwargs.get("id")
         user = get_object_or_404(ServiceUser, pk=user_id)
         if request.user != user:
-            message = _("You do not have permission to update or delete another user.")
+            message = _(
+                "You do not have permission to update or delete another user."
+            )
             messages.add_message(request, messages.ERROR, message)
             return redirect("users_list")
         form = ServiceUserForm(instance=user)
@@ -78,7 +83,9 @@ class UserFormDeleteView(UserLoginRequiredMixin, View):
         user_id = kwargs.get("id")
         user = get_object_or_404(ServiceUser, pk=user_id)
         if request.user != user:
-            message = _("You do not have permission to update or delete another user.")
+            message = _(
+                "You do not have permission to update or delete another user."
+            )
             messages.add_message(request, messages.ERROR, message)
             return redirect("users_list")
         return render(request, "delete_user.html", {"user": user})
@@ -89,7 +96,9 @@ class UserFormDeleteView(UserLoginRequiredMixin, View):
         tasks_where_user_is_author = Task.objects.filter(author=user)
         tasks_where_user_is_executor = Task.objects.filter(executor=user)
         if tasks_where_user_is_author or tasks_where_user_is_executor:
-            message = _("It is not possible to delete the user because it is used")
+            message = _(
+                "It is not possible to delete the user because it is used"
+            )
             messages.add_message(request, messages.ERROR, message)
         else:
             user.delete()

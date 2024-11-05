@@ -30,18 +30,14 @@ repos:
         # See https://github.com/pre-commit/pre-commit-hooks/issues/57
         exclude_types: [markdown]
         exclude: task_manager/tests/fixtures/expected_pieces_html.py
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.3
     hooks:
-      - id: black
-        exclude: task_manager/tests/fixtures/expected_pieces_html.py
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: isort (python)
-        args: ["--profile", "black", "--filter-files"]
-        exclude: task_manager/tests/fixtures/expected_pieces_html.py
+      - id: ruff-format
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+        require_serial: true
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:

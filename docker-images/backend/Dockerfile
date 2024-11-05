@@ -15,16 +15,16 @@ WORKDIR /app
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=10001
 RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
+   --disabled-password \
+   --gecos "" \
+   --home "/nonexistent" \
+   --shell "/sbin/nologin" \
+   --no-create-home \
+   --uid "${UID}" \
+   appuser
 
 # Copy the source code into the container.
-COPY manage.py Makefile pyproject.toml poetry.lock /app/
+COPY manage.py Makefile pyproject.toml poetry.lock .flake8 .prettierignore .prettierrc.js /app/
 COPY task_manager /app/task_manager
 COPY locale /app/locale
 

@@ -17,7 +17,7 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           make install
-          make migrations
+          make migrate
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
