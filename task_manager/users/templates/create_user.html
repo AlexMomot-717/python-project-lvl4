@@ -2,7 +2,7 @@
 {% block content %}
   {% load django_bootstrap5 %}
   {% load i18n %}
-  <h1 class="my-4">{% trans "Signing up" %}</h1>
+  <h1 class="my-4">{% trans "Sign up" %}</h1>
 
   <form method="post">
     {% csrf_token %}
@@ -10,7 +10,7 @@
     <input
       class="btn btn-primary"
       type="submit"
-      value="{% trans 'Sign up' %}"
+      value="{% trans 'Signing up' %}"
     />
   </form>
 {% endblock %}
