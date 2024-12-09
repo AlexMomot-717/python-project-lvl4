@@ -16,11 +16,10 @@ poetry install
 
 Create .env file following .env.example file info.
 
-
-Build and execute migrations:
+Execute migrations:
 
 ```
-make migrations
+make migrate
 ```
 
 Create superuser for application administration:
