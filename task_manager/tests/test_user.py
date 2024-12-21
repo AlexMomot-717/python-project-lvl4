@@ -1,6 +1,7 @@
 import pytest
 from django.template.response import TemplateResponse
 from django.test import Client
+
 from task_manager.tests.helpers import create_service_user, create_task
 from task_manager.users.forms import ServiceUserForm
 from task_manager.users.models import ServiceUser
@@ -59,7 +60,7 @@ def test_create_user_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert ServiceUser.objects.get(id=1).username == "alison"
+    assert ServiceUser.objects.get(first_name="taylor").username == "alison"
     assert response["Location"] == "/login/"
 
 
@@ -102,7 +103,10 @@ def test_update_user_get_requestuser_is_not_objectuser(client: Client) -> None:
     service_user = create_service_user()
     client.force_login(service_user)
     object_user_id = ServiceUser.objects.create(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     ).id
     route = f"/users/{object_user_id}/update/"
 
@@ -169,7 +173,7 @@ def test_update_user_post_form_is_not_valid(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    assert ServiceUser.objects.get(id=1) == service_user
+    assert ServiceUser.objects.get(id=user_id) == service_user
     assert response.status_code == 200
 
 
@@ -236,11 +240,16 @@ def test_delete_user_post_user_is_being_used_as_author(client: Client) -> None:
     assert response["Location"] == "/users/"
 
 
-def test_delete_user_post_user_is_being_used_as_executor(client: Client) -> None:
+def test_delete_user_post_user_is_being_used_as_executor(
+    client: Client,
+) -> None:
     # given
     task = create_task()
     user_executor = ServiceUser.objects.create(
-        first_name="nikola", last_name="tesla", username="niktes", password="****"
+        first_name="nikola",
+        last_name="tesla",
+        username="nikola_tesla",
+        password="****",
     )
     task.executor = user_executor
     client.force_login(user_executor)
@@ -253,7 +262,9 @@ def test_delete_user_post_user_is_being_used_as_executor(client: Client) -> None
 
     # then
     assert ServiceUser.objects.count() == 2
-    assert ServiceUser.objects.get(pk=2).username == "niktes"
+    assert (
+        ServiceUser.objects.get(id=user_executor.id).username == "nikola_tesla"
+    )
     assert response["Location"] == "/users/"
 
 

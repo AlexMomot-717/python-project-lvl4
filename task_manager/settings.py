@@ -15,6 +15,7 @@ from pathlib import Path
 
 import dj_database_url
 import django_stubs_ext
+import rollbar  # type: ignore
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 
@@ -35,7 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dummy_secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", True)
+DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -75,6 +76,15 @@ MIDDLEWARE = [
     "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
 ]
 
+
+ROLLBAR = {
+    "access_token": os.getenv("POST_SERVER_ITEM_ACCESS_TOKEN"),
+    "environment": "development" if DEBUG else "production",
+    "branch": "main",
+    "root": BASE_DIR,
+}
+
+
 ROOT_URLCONF = "task_manager.urls"
 
 TEMPLATES = [
@@ -99,10 +109,10 @@ WSGI_APPLICATION = "task_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES: dict[str, dj_database_url.DBConfig] = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -157,7 +167,9 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
     # and renames the files with unique names for each version to support long-term caching
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STATICFILES_STORAGE = (
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    )
 
 
 # Default primary key field type
@@ -176,9 +188,4 @@ MESSAGE_TAGS = {
 }
 
 
-ROLLBAR = {
-    "access_token": os.getenv("POST_SERVER_ITEM_ACCESS_TOKEN"),
-    "environment": "development" if DEBUG else "production",
-    "branch": "main",
-    "root": BASE_DIR,
-}
+rollbar.init(**ROLLBAR)

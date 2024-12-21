@@ -1,6 +1,7 @@
 import pytest
 from django.template.response import TemplateResponse
 from django.test import Client
+
 from task_manager.statuses.forms import StatusForm
 from task_manager.statuses.models import Status
 from task_manager.tests.helpers import (
