@@ -1,9 +1,9 @@
 EXPECTED_HTML_FILTERS_ARE_NOT_SET = """<tbody>
         
           <tr>
-            <td>1</td>
+            <td>{0}</td>
             <td>
-              <a href="/tasks/1/">deploy</a>
+              <a href="/tasks/{0}/">deploy</a>
             </td>
             <td>active</td>
             <td>ilon mask</td>
@@ -12,20 +12,20 @@ EXPECTED_HTML_FILTERS_ARE_NOT_SET = """<tbody>
             
             <td>15.07.2024 17:00</td>
             <td>
-              <a href="/tasks/1/update/"
+              <a href="/tasks/{0}/update/"
                 >Изменить</a
               >
               <br />
-              <a href="/tasks/1/delete/"
+              <a href="/tasks/{0}/delete/"
                 >Удалить</a
               >
             </td>
           </tr>
         
           <tr>
-            <td>2</td>
+            <td>{1}</td>
             <td>
-              <a href="/tasks/2/">fix</a>
+              <a href="/tasks/{1}/">fix</a>
             </td>
             <td>frozen</td>
             <td>taylor swift</td>
@@ -34,11 +34,11 @@ EXPECTED_HTML_FILTERS_ARE_NOT_SET = """<tbody>
             
             <td>15.07.2024 17:00</td>
             <td>
-              <a href="/tasks/2/update/"
+              <a href="/tasks/{1}/update/"
                 >Изменить</a
               >
               <br />
-              <a href="/tasks/2/delete/"
+              <a href="/tasks/{1}/delete/"
                 >Удалить</a
               >
             </td>
@@ -49,9 +49,9 @@ EXPECTED_HTML_FILTERS_ARE_NOT_SET = """<tbody>
 EXPECTED_HTML_FILTERS_ARE_SET = """<tbody>
         
           <tr>
-            <td>2</td>
+            <td>{0}</td>
             <td>
-              <a href="/tasks/2/">fix</a>
+              <a href="/tasks/{0}/">fix</a>
             </td>
             <td>frozen</td>
             <td>taylor swift</td>
@@ -60,11 +60,11 @@ EXPECTED_HTML_FILTERS_ARE_SET = """<tbody>
             
             <td>15.07.2024 17:00</td>
             <td>
-              <a href="/tasks/2/update/"
+              <a href="/tasks/{0}/update/"
                 >Изменить</a
               >
               <br />
-              <a href="/tasks/2/delete/"
+              <a href="/tasks/{0}/delete/"
                 >Удалить</a
               >
             </td>
@@ -75,9 +75,9 @@ EXPECTED_HTML_FILTERS_ARE_SET = """<tbody>
 EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY = """<tbody>
         
           <tr>
-            <td>1</td>
+            <td>{0}</td>
             <td>
-              <a href="/tasks/1/">deploy</a>
+              <a href="/tasks/{0}/">deploy</a>
             </td>
             <td>active</td>
             <td>ilon mask</td>
@@ -86,11 +86,11 @@ EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY = """<tbody>
             
             <td>15.07.2024 17:00</td>
             <td>
-              <a href="/tasks/1/update/"
+              <a href="/tasks/{0}/update/"
                 >Изменить</a
               >
               <br />
-              <a href="/tasks/1/delete/"
+              <a href="/tasks/{0}/delete/"
                 >Удалить</a
               >
             </td>

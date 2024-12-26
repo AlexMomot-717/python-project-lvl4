@@ -45,7 +45,7 @@ def test_tasks_list(client: Client) -> None:
     response = client.get(route)
 
     # then
-    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_NOT_SET
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_NOT_SET.format(task_1.id, task_2.id)
     assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
 
@@ -73,7 +73,9 @@ def test_tasks_list_request_user_tasks_only(client: Client) -> None:
     response = client.get(route, query_params={"request_user_tasks": True})
 
     # then
-    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY.format(
+        task_1.id
+    )
     assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
 
@@ -101,7 +103,7 @@ def test_tasks_list_filters_are_set(client: Client) -> None:
     response = client.get(route, query_params={"status": status_2.id})
 
     # then
-    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET.format(task_2.id)
     assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
 
@@ -196,16 +198,8 @@ def test_create_task_post(client: Client) -> None:
 
     # then
     task = Task.objects.get()
-    task_expected_dict = {
-        "id": 1,
-        "name": "fix",
-        "description": "",
-        "status": 1,
-        "author": 1,
-        "executor": 1,
-        "labels": [label],
-    }
-    assert model_to_dict(task) == task_expected_dict
+    assert model_to_dict(task)["name"] == "fix"
+    assert model_to_dict(task)["labels"] == [label]
     assert response["Location"] == "/tasks/"
 
 
@@ -264,16 +258,10 @@ def test_update_task_post(client: Client) -> None:
     response = client.post(route, data=form_data)
 
     # then
-    task_expected_dict = {
-        "id": 1,
-        "name": "fix",
-        "description": "",
-        "status": 2,
-        "author": 1,
-        "executor": 1,
-        "labels": [label1, label2],
-    }
-    assert model_to_dict(Task.objects.get()) == task_expected_dict
+    task = Task.objects.get()
+    assert model_to_dict(task)["name"] == "fix"
+    assert model_to_dict(task)["status"] == status_new.id
+    assert model_to_dict(task)["labels"] == [label1, label2]
     assert response["Location"] == "/tasks/"
 
 

@@ -15,21 +15,25 @@ class TaskFilter(FilterSet):
         queryset=Status.objects.all(),
         label=_("Status"),
         widget=forms.Select(attrs={"class": "form-select ml-2 mr-3"}),
+        label_suffix="",
     )
     executor = ModelChoiceFilter(
         queryset=ServiceUser.objects.all(),
         label=_("Executor"),
         widget=forms.Select(attrs={"class": "form-select ml-2 mr-3"}),
+        label_suffix="",
     )
     labels = ModelChoiceFilter(
         queryset=Label.objects.all(),
         label=_("Label"),
         widget=forms.Select(attrs={"class": "form-select ml-2 mr-3"}),
+        label_suffix="",
     )
     request_user_tasks = BooleanFilter(
         method="list_request_user_tasks",
         widget=forms.CheckboxInput(attrs={"class": "form-check-input mr-3"}),
         label=_("My tasks only"),
+        label_suffix="",
     )
 
     def list_request_user_tasks(
