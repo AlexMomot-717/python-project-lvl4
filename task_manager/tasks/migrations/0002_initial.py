@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -46,7 +45,8 @@ class Migration(migrations.Migration):
             model_name="task",
             name="status",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.PROTECT, to="statuses.status"
+                on_delete=django.db.models.deletion.PROTECT,
+                to="statuses.status",
             ),
         ),
     ]

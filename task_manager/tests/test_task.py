@@ -2,6 +2,7 @@ import pytest
 from django.forms.models import model_to_dict
 from django.template.response import TemplateResponse
 from django.test import Client
+
 from task_manager.statuses.models import Status
 from task_manager.tasks.forms import TaskForm
 from task_manager.tasks.models import Task
@@ -30,11 +31,17 @@ def test_tasks_list(client: Client) -> None:
     task_1.labels.add(label_1, label_2)
     task_1.save()
     service_user_2 = create_service_user(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     )
     status_2 = create_status(name="frozen")
     task_2 = Task.objects.create(
-        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+        name="fix",
+        status=status_2,
+        author=service_user_2,
+        executor=task_1.author,
     )
     task_2.labels.add(label_2)
     task_2.save()
@@ -45,7 +52,9 @@ def test_tasks_list(client: Client) -> None:
     response = client.get(route)
 
     # then
-    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_NOT_SET.format(task_1.id, task_2.id)
+    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_NOT_SET.format(
+        task_1.id, task_2.id
+    )
     assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
 
@@ -58,11 +67,17 @@ def test_tasks_list_request_user_tasks_only(client: Client) -> None:
     task_1.labels.add(label_1, label_2)
     task_1.save()
     service_user_2 = create_service_user(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     )
     status_2 = create_status(name="frozen")
     task_2 = Task.objects.create(
-        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+        name="fix",
+        status=status_2,
+        author=service_user_2,
+        executor=task_1.author,
     )
     task_2.labels.add(label_2)
     task_2.save()
@@ -73,8 +88,8 @@ def test_tasks_list_request_user_tasks_only(client: Client) -> None:
     response = client.get(route, query_params={"request_user_tasks": True})
 
     # then
-    expected_html_piece = EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY.format(
-        task_1.id
+    expected_html_piece = (
+        EXPECTED_HTML_FILTERS_ARE_SET_REQUEST_USER_TASKS_ONLY.format(task_1.id)
     )
     assert expected_html_piece in response.content.decode()
     assert response.status_code == 200
@@ -88,11 +103,17 @@ def test_tasks_list_filters_are_set(client: Client) -> None:
     task_1.labels.add(label_1, label_2)
     task_1.save()
     service_user_2 = create_service_user(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     )
     status_2 = create_status(name="frozen")
     task_2 = Task.objects.create(
-        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+        name="fix",
+        status=status_2,
+        author=service_user_2,
+        executor=task_1.author,
     )
     task_2.labels.add(label_2)
     task_2.save()
@@ -117,11 +138,17 @@ def test_tasks_list_filters_are_set_empty_queryset(client: Client) -> None:
     task_1.labels.add(label_1, label_2)
     task_1.save()
     service_user_2 = create_service_user(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     )
     status_2 = create_status(name="frozen")
     task_2 = Task.objects.create(
-        name="fix", status=status_2, author=service_user_2, executor=task_1.author
+        name="fix",
+        status=status_2,
+        author=service_user_2,
+        executor=task_1.author,
     )
     task_2.labels.add(label_2)
     task_2.save()
@@ -326,7 +353,10 @@ def test_delete_task_request_user_is_not_author(client: Client) -> None:
     # given
     task = create_task()
     request_user = ServiceUser.objects.create(
-        first_name="taylor", last_name="swift", username="alison", password="*****"
+        first_name="taylor",
+        last_name="swift",
+        username="alison",
+        password="*****",
     )
     client.force_login(request_user)
     task_id = task.id

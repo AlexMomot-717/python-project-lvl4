@@ -36,14 +36,13 @@ mypy = "^1.10.0"
 flake8 = "^7.0.0"
 django-hint = "^0.3.2"
 freezegun = "^1.5.1"
+ruff = "^0.8.4"
 
-[tool.isort]
-# See https://github.com/timothycrosley/isort#multi-line-output-modes
-multi_line_output = 3
-include_trailing_comma = true
-default_section = "FIRSTPARTY"
-# Should be: 80 - 1
-line_length = 79
+[tool.ruff]
+# Same as Black.
+lint.extend-select = ["I"]
+line-length = 80
+indent-width = 4
 
 [tool.mypy]
 python_version = 3.10

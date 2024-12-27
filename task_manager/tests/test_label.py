@@ -2,6 +2,7 @@ import pytest
 from django.forms.models import model_to_dict
 from django.template.response import TemplateResponse
 from django.test import Client
+
 from task_manager.labels.forms import LabelForm
 from task_manager.labels.models import Label
 from task_manager.tests.helpers import (
