@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   {% load i18n %}
-  <h1 class="my-4">{% translate "Signing in" %}</h1>
+  <h1 class="my-4">{% translate "Sign in" %}</h1>
   <form method="post">
     {% csrf_token %}
 
@@ -50,7 +50,7 @@
     <input
       class="btn btn-primary"
       type="submit"
-      value="{% translate 'Sign in' %}"
+      value="{% translate 'Signing in' %}"
     />
   </form>
 {% endblock %}
