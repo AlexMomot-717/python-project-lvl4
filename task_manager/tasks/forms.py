@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import gettext as _
+
 from task_manager.labels.models import Label
 from task_manager.statuses.models import Status
 from task_manager.tasks.models import Task
@@ -11,7 +12,9 @@ class TaskForm(forms.ModelForm[Task]):
     description = forms.CharField(
         label=_("Description"), widget=forms.Textarea(), required=False
     )
-    status = forms.ModelChoiceField(queryset=Status.objects.all(), label=_("Status"))
+    status = forms.ModelChoiceField(
+        queryset=Status.objects.all(), label=_("Status")
+    )
     executor = forms.ModelChoiceField(
         queryset=ServiceUser.objects.all(), label=_("Executor")
     )

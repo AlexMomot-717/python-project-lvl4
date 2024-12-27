@@ -3,7 +3,7 @@ accept-encodings = utf-8
 max-complexity = 10
 statistics = False
 # black compatibility
-max-line-length = 88
+max-line-length = 80
 extend-ignore = E203, E501
 per-file-ignores = task_manager/tests/fixtures/expected_pieces_html.py:W293
 doctests = True
